@@ -1,11 +1,33 @@
-module UI.Backend.CssHelpers exposing (..)
+module UI.Backend.CssHelpers exposing (MaybeLayout, Units, align, background, border, borderRadius, borderWidth, color, direction, display, font, inheritable, kernel, length, maybeIfNot, overflow, shadow, textAlign, units, unitsRect)
 
 import Hex
-import UI.Backend.Graphics exposing (..)
+import UI.Backend.Graphics exposing (Alignment(..), Background(..), Border(..), Color(..), Corners, Direction(..), FontFallback(..), Inheritable(..), Length(..), Overflow(..), Rect, Shadow(..), TextAlignment(..))
 
 
-type Units
-    = Px
+type alias MaybeLayout =
+    {- You can use to cleanup the values that are already the same as default in your API -}
+    { alignSelf : Maybe Alignment
+    , background : Maybe Background
+    , border : Maybe Border
+    , displayDirection : Maybe Direction
+    , fontColor : Maybe (Inheritable Color)
+    , fontFamilies : Maybe (Inheritable ( List String, FontFallback ))
+    , fontSize : Maybe (Inheritable Int)
+    , fontWeight : Maybe (Inheritable Int)
+    , height : Maybe Length
+    , justify : Maybe Alignment
+    , outerShadow : Maybe Shadow
+    , overflowX : Maybe Overflow
+    , overflowY : Maybe Overflow
+    , padding : Maybe Rect
+    , spacing : Maybe Int
+    , textAlign : Maybe TextAlignment -- Default depends on LTR and RTL.
+    , width : Maybe Length
+    }
+
+
+type alias Units =
+    String
 
 
 align : Alignment -> String
@@ -73,19 +95,6 @@ font ( families, fallback ) =
     String.join ", " <| families ++ [ fontFallback fallback ]
 
 
-fontFallback : FontFallback -> String
-fontFallback fallback =
-    case fallback of
-        SansSerif ->
-            "sans-serif"
-
-        Serif ->
-            "serif"
-
-        Monospace ->
-            "monospace"
-
-
 inheritable : (a -> String) -> Inheritable a -> String
 inheritable encoder inheritable_ =
     case inheritable_ of
@@ -137,6 +146,15 @@ length config value =
             units config units_
 
 
+maybeIfNot : a -> a -> Maybe a
+maybeIfNot default value =
+    if value == default then
+        Nothing
+
+    else
+        Just value
+
+
 overflow : Overflow -> String
 overflow overflow_ =
     case overflow_ of
@@ -173,19 +191,7 @@ textAlign alignment =
 
 units : { x | units : Units } -> Int -> String
 units config value =
-    case config.units of
-        Px ->
-            String.fromInt value ++ "px"
-
-
-unitsCorners : { x | units : Units } -> Corners -> String
-unitsCorners config corners =
-    String.join " "
-        [ units config corners.topLeft
-        , units config corners.topRight
-        , units config corners.bottomRight
-        , units config corners.bottomLeft
-        ]
+    String.fromInt value ++ config.units
 
 
 unitsRect : { x | units : Units } -> Rect -> String
@@ -195,4 +201,27 @@ unitsRect config rect =
         , units config rect.right
         , units config rect.bottom
         , units config rect.left
+        ]
+
+
+fontFallback : FontFallback -> String
+fontFallback fallback =
+    case fallback of
+        SansSerif ->
+            "sans-serif"
+
+        Serif ->
+            "serif"
+
+        Monospace ->
+            "monospace"
+
+
+unitsCorners : { x | units : Units } -> Corners -> String
+unitsCorners config corners =
+    String.join " "
+        [ units config corners.topLeft
+        , units config corners.topRight
+        , units config corners.bottomRight
+        , units config corners.bottomLeft
         ]

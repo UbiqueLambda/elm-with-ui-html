@@ -1,11 +1,17 @@
-module UI.Backend.Html exposing (Encoder, encode, init)
+module UI.Backend.Html exposing (Encoder, init, encode)
+
+{-| [Elm's HTML](https://package.elm-lang.org/packages/elm/html/latest/Html#Html) renderer for the [UI module](https://github.com/UbiqueLambda/elm-with-ui) and [its backend](https://github.com/UbiqueLambda/elm-with-ui-backend).
+
+@docs Encoder, init, encode
+
+-}
 
 import Html exposing (Html)
 import Html.Attributes as HtmlAttr
 import Html.Events as HtmlEvents
 import Html.Keyed as Keyed
-import UI.Backend.CssHelpers as Css
-import UI.Backend.Graphics as Graphics exposing (..)
+import UI.Backend.CssHelpers as Css exposing (MaybeLayout, maybeIfNot)
+import UI.Backend.Graphics as Graphics exposing (Alignment(..), Direction(..), Graphics(..), Inheritable(..), Layout, Length(..), Overflow(..), TextAlignment(..), implicitGroup, singletonRect)
 
 
 {-| Types that describes and configures the encoding to Elm-compatible HTML.
@@ -22,21 +28,11 @@ type alias Config =
     }
 
 
-{-| Outputs Elm-compatible HTML-structure.
-
-**NOTE**: To be used once in an entire document since it provides a generic spreadsheet.
-
--}
-encode : Encoder -> Graphics msg -> List (Html msg)
-encode (Encoder config) =
-    implicitGroup >> fromGraphics config True >> addStyleKernel config
-
-
 {-| Initialized the default encoder with the default settings:
 
   - Node are tagged with `<g></g>`;
   - Root nodes have `class="root"`;
-  - [Stacked](#stack) nodes have `class="stack"`;
+  - Stack groups have `class="stack"`;
   - `unit` means CSS' `px`.
 
 -}
@@ -46,8 +42,18 @@ init =
         { rootClass = "root"
         , stackClass = "stack"
         , tag = "g"
-        , units = Css.Px
+        , units = "px"
         }
+
+
+{-| Outputs Elm-compatible HTML-structure.
+
+**NOTE**: To be used once in an entire document since it provides a generic spreadsheet.
+
+-}
+encode : Encoder -> Graphics msg -> List (Html msg)
+encode (Encoder config) =
+    implicitGroup >> fromGraphics config True >> addStyleKernel config
 
 
 addStyleKernel : Config -> Html msg -> List (Html msg)
@@ -151,6 +157,28 @@ maybeClass pred className maybeAccu =
 
     else
         maybeAccu
+
+
+removeDefaults : Layout -> MaybeLayout
+removeDefaults original =
+    { alignSelf = maybeIfNot Start original.alignSelf
+    , background = original.background
+    , border = original.border
+    , displayDirection = original.displayDirection
+    , fontColor = maybeIfNot Inherit original.fontColor
+    , fontFamilies = maybeIfNot Inherit original.fontFamilies
+    , fontSize = maybeIfNot Inherit original.fontSize
+    , fontWeight = maybeIfNot Inherit original.fontWeight
+    , height = maybeIfNot FitContents original.height
+    , justify = maybeIfNot Start original.justify
+    , outerShadow = original.outerShadow
+    , overflowX = maybeIfNot Clip original.overflowX
+    , overflowY = maybeIfNot Clip original.overflowY
+    , padding = maybeIfNot (singletonRect 0) original.padding
+    , spacing = maybeIfNot 0 original.spacing
+    , textAlign = maybeIfNot TextLeft original.textAlign
+    , width = maybeIfNot FitContents original.width
+    }
 
 
 styleKernel : Config -> Html msg
