@@ -1,4 +1,4 @@
-module UI.Backend.Html exposing (Encoder, init, encode)
+module UI.Renderer.Html exposing (Encoder, init, encode)
 
 {-| [Elm's HTML](https://package.elm-lang.org/packages/elm/html/latest/Html#Html) renderer for the [UI module](https://github.com/UbiqueLambda/elm-with-ui) and [its backend](https://github.com/UbiqueLambda/elm-with-ui-backend).
 
