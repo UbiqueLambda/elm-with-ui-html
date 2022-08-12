@@ -105,7 +105,8 @@ attributesToHtml config root (Graphics.Attributes attrs) =
     []
         |> andStyle "align-self" (Maybe.map Css.align layout.alignSelf)
         |> andStyle "background" (Maybe.map Css.background layout.background)
-        |> andStyle "border" (Maybe.map Css.border layout.border)
+        |> andStyle "border-style" (Maybe.map (always "solid") layout.border)
+        |> andStyle "border-color" (Maybe.map Css.borderColor layout.border)
         |> andStyle "border-radius" (Maybe.map (Css.borderRadius config) layout.border)
         |> andStyle "border-width" (Maybe.map (Css.borderWidth config) layout.border)
         |> andStyle "box-shadow" (Maybe.map (Css.shadow config) layout.outerShadow)

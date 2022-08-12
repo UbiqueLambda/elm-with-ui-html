@@ -1,4 +1,25 @@
-module UI.Backend.CssHelpers exposing (MaybeLayout, Units, align, background, border, borderRadius, borderWidth, color, direction, display, font, inheritable, kernel, length, maybeIfNot, overflow, shadow, textAlign, units, unitsRect)
+module UI.Backend.CssHelpers exposing
+    ( MaybeLayout
+    , Units
+    , align
+    , background
+    , borderColor
+    , borderRadius
+    , borderWidth
+    , color
+    , direction
+    , display
+    , font
+    , inheritable
+    , kernel
+    , length
+    , maybeIfNot
+    , overflow
+    , shadow
+    , textAlign
+    , units
+    , unitsRect
+    )
 
 import Hex
 import UI.Backend.Graphics exposing (Alignment(..), Background(..), Border(..), Color(..), Corners, Direction(..), FontFallback(..), Inheritable(..), Length(..), Overflow(..), Rect, Shadow(..), TextAlignment(..))
@@ -48,9 +69,9 @@ background (Background background_) =
     color background_.color
 
 
-border : Border -> String
-border (Border border_) =
-    "solid " ++ color border_.color
+borderColor : Border -> String
+borderColor (Border border_) =
+    color border_.color
 
 
 borderRadius : { x | units : Units } -> Border -> String

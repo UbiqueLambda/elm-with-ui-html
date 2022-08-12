@@ -3,7 +3,7 @@
     "name": "UbiqueLambda/elm-with-ui-html",
     "summary": "Elm's HTML renderer for UbiqueLambda/elm-with-ui",
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "exposed-modules": [
         "UI.Renderer.Html"
     ],
